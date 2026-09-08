@@ -41,7 +41,7 @@ Deep Learning Projects/
   - 📄 **TensorFlow / Keras:** [`ANN/Loan_Default_Prediction_ANN_TensorFlow.ipynb`](file:///C:/Users/adhik/OneDrive/Desktop/Deep%20Leaning%20Projects/ANN/Loan_Default_Prediction_ANN_TensorFlow.ipynb)
 * **Problem Type:** Binary Tabular Classification (Predicting whether a borrower will default on a loan).
 * **Key Deep Learning Concepts:**
-  - **Feature Scaling**: `StandardScaler` normalization of continuous features.
+  - **Feature Scaling**: `StandardScaler` normalization of continuous tabular features.
   - **Handling Class Imbalance**: Applying `SMOTE` (Synthetic Minority Over-sampling Technique) to balance default vs. non-default target classes.
   - **PyTorch Stack**: `nn.Module`, `nn.Linear`, `nn.BatchNorm1d`, `nn.Dropout`, `nn.BCELoss`, `optim.Adam`.
   - **TensorFlow / Keras Stack**: `tf.keras.Sequential`, `Dense`, `BatchNormalization`, `Dropout`, `binary_crossentropy`, `Adam`.
@@ -56,12 +56,12 @@ Deep Learning Projects/
   - 📄 **TensorFlow / Keras:** [`CNN/CNN_and_Transfer_Learning_Project_TensorFlow.ipynb`](file:///C:/Users/adhik/OneDrive/Desktop/Deep%20Leaning%20Projects/CNN/CNN_and_Transfer_Learning_Project_TensorFlow.ipynb)
 * **Dataset:** Kaggle Rock-Paper-Scissors Dataset (`sanikamal/rock-paper-scissors-dataset`) via `kagglehub`.
 * **Problem Type:** Multi-Class Image Classification (Rock, Paper, Scissors hand gestures).
-* **Key Deep Learning Concepts:**
-  - **Data Preprocessing & Augmentation**: Image resizing (`64x64`), Random Flips, Rotations, Color Jitter, and Normalization.
+* **Key Deep Learning Concepts & Overfitting Fixes:**
+  - **Data Preprocessing & Augmentation**: Image resizing, `RandomFlip`, `RandomRotation(0.2)`, `RandomZoom(0.2)`, `RandomContrast(0.2)` to force learning general hand outlines rather than background colors.
   - **PyTorch CNN Architecture**: 3x3 `nn.Conv2d` layers (Filters/Kernels & Feature Maps), `nn.ReLU`, `nn.MaxPool2d(2, 2)`, `nn.BatchNorm2d`, `nn.Dropout(0.4)`.
-  - **TensorFlow CNN Architecture**: `tf.keras.layers.Conv2D`, `MaxPooling2D`, `BatchNormalization`, `Dropout(0.4)`, `Dense`.
-  - **Early Stopping Mechanism**: Custom PyTorch callback / `tf.keras.callbacks.EarlyStopping` to stop training when validation loss spikes and restore best model weights.
-  - **Error Analysis**: Visualizing misclassified test set images with `True Label vs. Predicted Label` titles.
+  - **TensorFlow CNN Architecture**: `tf.keras.layers.Conv2D`, `BatchNormalization`, `MaxPooling2D`, **`GlobalAveragePooling2D()`** (reduces FC head parameters by >95% to eliminate overfitting), L2 Regularization (`l2(1e-3)`), and Multi-layer Dropout (`0.25` & `0.4`).
+  - **Early Stopping & Learning Rate Decay**: PyTorch custom callback / `tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=4, restore_best_weights=True)` + `ReduceLROnPlateau` to halt training before validation loss degrades and restore peak performing weights.
+  - **Error Analysis**: Visualizing misclassified test set images with `True Label vs. Predicted Label` titles and Seaborn Confusion Matrix heatmaps.
 
 ---
 
@@ -127,8 +127,8 @@ pip install torch torchvision tensorflow numpy pandas matplotlib seaborn scikit-
 
 | Architecture | Primary Use Case | PyTorch Module | TensorFlow / Keras Layer | Key Features & Advantages | Loss / Metrics |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **ANN** | Tabular Classification | `nn.Linear` | `tf.keras.layers.Dense` | Dense layers, ReLU, Batch Normalization, Dropout | Binary Crossentropy, F1-Score |
-| **CNN** | Image Classification | `nn.Conv2d` | `tf.keras.layers.Conv2D` | Spatial filters/kernels, MaxPool, Early Stopping | CrossEntropy, Confusion Matrix |
+| **ANN** | Tabular Classification | `nn.Linear` | `tf.keras.layers.Dense` | Dense layers, ReLU, Batch Normalization, Dropout, SMOTE | Binary Crossentropy, F1-Score |
+| **CNN** | Image Classification | `nn.Conv2d` | `tf.keras.layers.Conv2D` | Conv2d, GlobalAveragePooling2D, EarlyStopping, L2 Reg | CrossEntropy, Confusion Matrix |
 | **RNN** | Short Sequential Data | `nn.RNN` | `tf.keras.layers.SimpleRNN` | Hidden state memory ($h_t$) across temporal sequences | MSELoss, RMSE (°C) |
 | **LSTM** | Long Time Series Data | `nn.LSTM` | `tf.keras.layers.LSTM` | Cell state ($c_t$) + Forget, Input, Output memory gates | MSELoss, RMSE (kW) |
 
